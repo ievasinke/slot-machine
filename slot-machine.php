@@ -16,7 +16,6 @@ $betTokens = 5;
 $columns = 5;
 $rows = 3;
 $totalTokens = 0;
-$totalWinnings = 0;
 
 $board = [];
 $elements = [
@@ -59,7 +58,7 @@ function weightedSample(array $elements): string
     return key($elements);
 }
 
-function setBet(int $betTokens, int $totalTokens):int
+function setBet(int $betTokens, int $totalTokens): int
 {
     echo "Minimum for the BET are 5 tokens.\n";
     echo "1 to place as a single BET.\n";
@@ -67,8 +66,9 @@ function setBet(int $betTokens, int $totalTokens):int
     echo "3 to triple the BET etc.\n";
     $betMultiplier = (int)readline("Enter number to multiply the BET: ");
     $betTokens *= $betMultiplier;
+    echo "Your BET is $betTokens tokens.\n";
     if ($betMultiplier < 1 || $betTokens > $totalTokens) {
-        exit("Game over. See you soon!");
+        exit("Game over. See you soon!\n");
     }
     return $betTokens;
 }
@@ -81,8 +81,6 @@ if ($totalTokens < $betTokens) {
 }
 
 $betTokens = setBet($betTokens, $totalTokens);
-
-echo "Your BET is $betTokens tokens.\n";
 
 while ($totalTokens >= $betTokens) {
     $totalTokens -= $betTokens;
@@ -100,26 +98,22 @@ while ($totalTokens >= $betTokens) {
         echo PHP_EOL;
     }
 
-    foreach ($elements as $element => $weight) {
-        foreach ($winningPatterns as $pattern) {
-            $patternFound = true;
+    foreach ($winningPatterns as $pattern) {
+        $winningElements = [];
 
-            foreach ($pattern as $coordinate) {
-                list($row, $column) = $coordinate;
-
-                if ($board[$row][$column] !== $element) {
-                    $patternFound = false;
-                    break;
-                }
-            }
-            if ($patternFound) {
-                $winningAmount += round((30 * $betTokens) / $weight);
-            }
+        foreach ($pattern as $coordinate) {
+            list($row, $column) = $coordinate;
+            $winningElements[] = $board[$row][$column];
+        }
+        if (count(array_count_values($winningElements)) === 1) {
+            $weight = $elements[$winningElements[0]];
+            $winningAmount += round((30 * $betTokens) / $weight);
+            $totalTokens += $winningAmount;
         }
     }
+
     if ($winningAmount > 0) {
         echo "You won $winningAmount\n";
-        $totalWinnings += $winningAmount;
     } else {
         echo "No winning pattern found\n";
     }
@@ -127,16 +121,17 @@ while ($totalTokens >= $betTokens) {
 
     $choice = 0;
     if ($totalTokens >= $betTokens) {
-        $choice = (int) readline("Do you want to continue (1), change the bet (2), anything to exit: ");
+        $choice = (int)readline("Do you want to continue (1), change the bet (2), anything to exit: ");
     }
     if ($choice === 1) {
         continue;
     }
     if ($choice === 2) {
+        $betTokens = 5;
         $betTokens = setBet($betTokens, $totalTokens);
         continue;
     }
     break;
 }
 
-exit("Thank you for playing! You won $totalWinnings.\n");
+exit("Thank you for playing!\n");
