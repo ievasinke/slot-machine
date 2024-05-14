@@ -59,6 +59,20 @@ function weightedSample(array $elements): string
     return key($elements);
 }
 
+function setBet(int $betTokens, int $totalTokens):int
+{
+    echo "Minimum for the BET are 5 tokens.\n";
+    echo "1 to place as a single BET.\n";
+    echo "2 to double the BET.\n";
+    echo "3 to triple the BET etc.\n";
+    $betMultiplier = (int)readline("Enter number to multiply the BET: ");
+    $betTokens *= $betMultiplier;
+    if ($betMultiplier < 1 || $betTokens > $totalTokens) {
+        exit("Game over. See you soon!");
+    }
+    return $betTokens;
+}
+
 echo "Welcome! Let's play a game.\n";
 $totalTokens = (int)readline("Enter amount of tokens to play: ");
 
@@ -66,16 +80,7 @@ if ($totalTokens < $betTokens) {
     exit("Invalid value.\n");
 }
 
-echo "Minimum for the BET are 5 tokens.\n";
-echo "1 to place as a single BET.\n";
-echo "2 to double the BET.\n";
-echo "3 to triple the BET etc.\n";
-$betMultiplier = (int)readline("Enter number to multiply the BET: ");
-$betTokens *= $betMultiplier;
-
-if ($betMultiplier < 1 || $betTokens > $totalTokens) {
-    exit("Game over. See you soon!");
-}
+$betTokens = setBet($betTokens, $totalTokens);
 
 echo "Your BET is $betTokens tokens.\n";
 
@@ -108,7 +113,7 @@ while ($totalTokens >= $betTokens) {
                 }
             }
             if ($patternFound) {
-                $winningAmount += round((10 * $betTokens) / $weight);
+                $winningAmount += round((30 * $betTokens) / $weight);
             }
         }
     }
@@ -119,6 +124,19 @@ while ($totalTokens >= $betTokens) {
         echo "No winning pattern found\n";
     }
     echo "Tokens left: $totalTokens\n";
+
+    $choice = 0;
+    if ($totalTokens >= $betTokens) {
+        $choice = (int) readline("Do you want to continue (1), change the bet (2), anything to exit: ");
+    }
+    if ($choice === 1) {
+        continue;
+    }
+    if ($choice === 2) {
+        $betTokens = setBet($betTokens, $totalTokens);
+        continue;
+    }
+    break;
 }
 
 exit("Thank you for playing! You won $totalWinnings.\n");
