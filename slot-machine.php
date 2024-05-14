@@ -91,11 +91,11 @@ if ($betMultiplier < 1 || $betTokens > $tokens) {
 }
 echo "Your BET is $betTokens tokens.\n";
 
+$winningAmount = 0;
+
 while ($totalTokens >= $betTokens) {
     $totalTokens -= $betTokens;
     spinWheel($columns, $rows, $board, $elements);
-
-    $winningAmount = 0;
 
     foreach ($elements as $element => $weight) {
         foreach ($winningPatterns as $pattern) {
@@ -116,10 +116,11 @@ while ($totalTokens >= $betTokens) {
 
     }
     if ($winningAmount > 0) {
-        $totalTokens += $winningAmount;
         echo "You won $winningAmount\n";
     } else {
         echo "No winning pattern found\n";
     }
     echo "Tokens left: $totalTokens\n";
 }
+
+exit("Thank toy for playing! You won $winningAmount.\n");
