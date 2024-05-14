@@ -121,4 +121,4 @@ while ($totalTokens >= $betTokens) {
     echo "Tokens left: $totalTokens\n";
 }
 
-exit("Thank toy for playing! You won $totalWinnings.\n");
+exit("Thank you for playing! You won $totalWinnings.\n");
