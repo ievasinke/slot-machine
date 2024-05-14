@@ -70,16 +70,17 @@ echo "Minimum for the BET are 5 tokens.\n";
 echo "1 to place as a single BET.\n";
 echo "2 to double the BET.\n";
 echo "3 to triple the BET etc.\n";
-$betMultiplier = (int) readline("Enter number to multiply the BET: ");
+$betMultiplier = (int)readline("Enter number to multiply the BET: ");
 $betTokens *= $betMultiplier;
+
 if ($betMultiplier < 1 || $betTokens > $totalTokens) {
     exit("Game over. See you soon!");
 }
+
 echo "Your BET is $betTokens tokens.\n";
 
 while ($totalTokens >= $betTokens) {
     $totalTokens -= $betTokens;
-
     $winningAmount = 0;
 
     for ($row = 0; $row < $rows; $row++) {
@@ -110,7 +111,6 @@ while ($totalTokens >= $betTokens) {
                 $winningAmount += round((10 * $betTokens) / $weight);
             }
         }
-
     }
     if ($winningAmount > 0) {
         echo "You won $winningAmount\n";
