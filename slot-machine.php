@@ -12,21 +12,21 @@
  * - There should be option to define win conditions with few lines of code
  */
 
-$rows = 3;
-$columns = 5;
-
 $betTokens = 5;
+$columns = 5;
+$rows = 3;
 $totalTokens = 0;
+$totalWinnings = 0;
 
 $board = [];
 $elements = [
     "$" => 1,
-    "*" => 3,
+    "*" => 13,
     "+" => 4,
     "M" => 7,
     "#" => 2,
     "=" => 15,
-    "@" => 14
+    "@" => 24
 ];
 $winningPatterns = [
     [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
@@ -59,8 +59,29 @@ function weightedSample(array $elements): string
     return key($elements);
 }
 
-function spinWheel(int $columns, int $rows, array &$board, array $elements): array
-{
+echo "Welcome! Let's play a game.\n";
+$totalTokens = (int)readline("Enter amount of tokens to play: ");
+
+if ($totalTokens < $betTokens) {
+    exit("Invalid value.\n");
+}
+
+echo "Minimum for the BET are 5 tokens.\n";
+echo "1 to place as a single BET.\n";
+echo "2 to double the BET.\n";
+echo "3 to triple the BET etc.\n";
+$betMultiplier = (int) readline("Enter number to multiply the BET: ");
+$betTokens *= $betMultiplier;
+if ($betMultiplier < 1 || $betTokens > $totalTokens) {
+    exit("Game over. See you soon!");
+}
+echo "Your BET is $betTokens tokens.\n";
+
+while ($totalTokens >= $betTokens) {
+    $totalTokens -= $betTokens;
+
+    $winningAmount = 0;
+
     for ($row = 0; $row < $rows; $row++) {
         for ($column = 0; $column < $columns; $column++) {
             $board[$row][$column] = weightedSample($elements);
@@ -72,30 +93,6 @@ function spinWheel(int $columns, int $rows, array &$board, array $elements): arr
         }
         echo PHP_EOL;
     }
-    return $board;
-}
-
-echo "Welcome! Let's play a game.\n";
-$tokens = (int)readline("Enter amount of tokens to play: ");
-$totalTokens += $tokens;
-
-echo "Press number to raise your bet.\n";
-echo "Minimum for the BET are 5 tokens.\n";
-echo "1 to place as a single BET.\n";
-echo "2 to double the BET.\n";
-echo "3 to triple the BET etc.\n";
-$betMultiplier = (int) readline("Enter number to multiply bet: ");
-$betTokens *= $betMultiplier;
-if ($betMultiplier < 1 || $betTokens > $tokens) {
-    exit("Game over. See you soon!");
-}
-echo "Your BET is $betTokens tokens.\n";
-
-$winningAmount = 0;
-
-while ($totalTokens >= $betTokens) {
-    $totalTokens -= $betTokens;
-    spinWheel($columns, $rows, $board, $elements);
 
     foreach ($elements as $element => $weight) {
         foreach ($winningPatterns as $pattern) {
@@ -117,10 +114,11 @@ while ($totalTokens >= $betTokens) {
     }
     if ($winningAmount > 0) {
         echo "You won $winningAmount\n";
+        $totalWinnings += $winningAmount;
     } else {
         echo "No winning pattern found\n";
     }
     echo "Tokens left: $totalTokens\n";
 }
 
-exit("Thank toy for playing! You won $winningAmount.\n");
+exit("Thank toy for playing! You won $totalWinnings.\n");
