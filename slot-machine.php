@@ -12,7 +12,7 @@
  * - There should be option to define win conditions with few lines of code
  */
 
-$betTokens = 5;
+$betTokenBase = 5;
 $columns = 5;
 $rows = 3;
 $totalTokens = 0;
@@ -58,14 +58,14 @@ function weightedSample(array $elements): string
     return key($elements);
 }
 
-function setBet(int $betTokens, int $totalTokens): int
+function setBet(int $betTokenBase, int $totalTokens): int
 {
     echo "Minimum for the BET are 5 tokens.\n";
     echo "1 to place as a single BET.\n";
     echo "2 to double the BET.\n";
     echo "3 to triple the BET etc.\n";
     $betMultiplier = (int)readline("Enter number to multiply the BET: ");
-    $betTokens *= $betMultiplier;
+    $betTokens = $betTokenBase * $betMultiplier;
     echo "Your BET is $betTokens tokens.\n";
     if ($betMultiplier < 1 || $betTokens > $totalTokens) {
         exit("Game over. See you soon!\n");
@@ -76,11 +76,11 @@ function setBet(int $betTokens, int $totalTokens): int
 echo "Welcome! Let's play a game.\n";
 $totalTokens = (int)readline("Enter amount of tokens to play: ");
 
+$betTokens = setBet($betTokenBase, $totalTokens);
+
 if ($totalTokens < $betTokens) {
     exit("Invalid value.\n");
 }
-
-$betTokens = setBet($betTokens, $totalTokens);
 
 while ($totalTokens >= $betTokens) {
     $totalTokens -= $betTokens;
@@ -127,8 +127,7 @@ while ($totalTokens >= $betTokens) {
         continue;
     }
     if ($choice === 2) {
-        $betTokens = 5;
-        $betTokens = setBet($betTokens, $totalTokens);
+        $betTokens = setBet($betTokenBase, $totalTokens);
         continue;
     }
     break;
